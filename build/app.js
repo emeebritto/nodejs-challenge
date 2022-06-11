@@ -5,7 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 var express_1 = __importDefault(require("express"));
+var dotenv_1 = __importDefault(require("dotenv"));
 var router_1 = require("./router");
+dotenv_1.default.config();
 var App = /** @class */ (function () {
     function App() {
         this.server = (0, express_1.default)();
