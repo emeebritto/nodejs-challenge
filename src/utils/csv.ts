@@ -1,10 +1,8 @@
 import csv from 'csv-parser';
 import fs from 'node:fs';
 
-class CSV {
-	constructor() {}
-
-	loadCSV(path:string): Promise<any[]> {
+class CSVReader {
+	static loadCSV(path:string): Promise<any[]> {
 		return new Promise((resolve, reject) => {
 			const results:any[] = [];
 			try {
@@ -21,5 +19,4 @@ class CSV {
 	}
 }
 
-const csvReader = new CSV();
-export default csvReader;
+export default CSVReader;

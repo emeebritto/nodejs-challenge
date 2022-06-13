@@ -1,5 +1,5 @@
-import { ContactModel } from "./contact";
 import hubspot from "../services/hubspot";
+import { ContactFromDB, ContactProps } from "../common/interfaces";
 
 class Contacts {
 	private contacts:any[];
@@ -9,9 +9,13 @@ class Contacts {
 		this.contacts = []; 
 	}
 
-	async add(ctt: ContactModel): Promise<any> {
-		this.contacts.push(ctt);
-		return await hubspot.lists.addContacts(this.listID, { vids: [ ctt.properties.vid ] })
+	async add(ctt:ContactProps): Promise<ContactFromDB> {
+		return hubspot.lists.addContacts(this.listID, { vids: [ ctt.vid ] })
+			.then((res:ContactFromDB) => {
+				this.contacts.push(ctt)
+				console.log(`Contacts -> ${ctt.email} has been added`);
+				return res
+			})
 	}
 
 	get show() {
@@ -23,14 +27,26 @@ class Contacts {
 	}
 }
 
-export default Contacts;
+class ContactsFactory {
+	static load(listId:number) {
+		return new Contacts(listId);
+	}
 
+	static async create(configs:{ name:string }) {
+		const { listId } = await hubspot.lists.create(configs);
+		console.log(`ContactsFactory -> list (name: ${configs.name}) was created`);
+		return new Contacts(listId);
+	}
 
+	static async destroyAll() {
+		const { lists } = await hubspot.lists.get();
+		console.log(`ContactsFactory -> ${lists.length} will be destroyed`);
+		for (let i=0; i < lists.length; i++) {
+			let listId = lists[i].listId;
+			await hubspot.lists.delete(listId);
+		}
+	}
+}
 
-	// asyncMap() {
-	// 	return new Promise((resolve, reject) => {
-	// 		for (let i=0; i < this.length; i++) {
-	// 			console.log(this[i]);
-	// 		}
-	// 	});
-	// }
+//export default Contacts;
+export { ContactsFactory };

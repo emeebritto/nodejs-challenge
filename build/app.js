@@ -4,22 +4,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
-var express_1 = __importDefault(require("express"));
-var dotenv_1 = __importDefault(require("dotenv"));
-var router_1 = require("./router");
+const express_1 = __importDefault(require("express"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const router_1 = require("./router");
 dotenv_1.default.config();
-var App = /** @class */ (function () {
-    function App() {
+class App {
+    constructor() {
         this.server = (0, express_1.default)();
+        this.port = process.env.port || 3000;
         this.middleware();
         this.router();
     }
-    App.prototype.middleware = function () {
+    middleware() {
         this.server.use(express_1.default.json());
-    };
-    App.prototype.router = function () {
+    }
+    router() {
         this.server.use(router_1.router);
-    };
-    return App;
-}());
+    }
+    startup(callback) {
+        this.server.listen(this.port, () => {
+            if (callback)
+                callback();
+        });
+    }
+}
 exports.App = App;
