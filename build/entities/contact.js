@@ -44,6 +44,10 @@ class ContactFactory {
         const ctt = await hubspot_1.default.contacts.getByEmail(String(contactEmail));
         return new Contact({ vid: ctt.vid, ...ctt.properties });
     }
+    static async loadById(contactEmail) {
+        const ctt = await hubspot_1.default.contacts.getById(String(contactEmail));
+        return new Contact({ vid: ctt.vid, ...ctt.properties });
+    }
 }
 exports.ContactFactory = ContactFactory;
 exports.default = Contact;

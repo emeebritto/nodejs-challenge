@@ -1,3 +1,4 @@
+import "./env.config";
 import { App } from "./app";
 import "./startup";
 
