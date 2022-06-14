@@ -48,8 +48,8 @@ class ContactFactory {
 		return new Contact({ vid: ctt.vid, ...ctt.properties });
 	}
 
-	static async loadById(contactEmail:string) {
-		const ctt = await hubspot.contacts.getById(String(contactEmail));
+	static async loadById(contactVid:string) {
+		const ctt = await hubspot.contacts.getById(String(contactVid));
 		return new Contact({ vid: ctt.vid, ...ctt.properties });
 	}
 }

@@ -14,7 +14,12 @@ router.get("/", (req, res) => {
 })
 
 //Routes
-router.get("/contacts", contactsController.contacts);
-router.get("/contacts/domains", contactsController.domains);
+router
+	.route("/contacts")
+	.get(contactsController.contacts.bind(contactsController));
+
+router
+	.route("/contacts/domains")
+	.get(contactsController.domains.bind(contactsController));
 
 export { router };

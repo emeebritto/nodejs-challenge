@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContactsFactory = void 0;
+exports.Contacts = exports.ContactsFactory = void 0;
 const hubspot_1 = __importDefault(require("../services/hubspot"));
 const utils_1 = require("../utils");
 class Contacts {
@@ -11,17 +11,20 @@ class Contacts {
         this.listID = listID;
         this.contacts = contacts || [];
     }
+    log(msg) {
+        console.log(`Contacts -> ${msg}`);
+    }
     async add(ctt) {
         return hubspot_1.default.lists.addContacts(this.listID, { vids: [ctt.vid] })
             .then((res) => {
             this.contacts.push(ctt);
-            console.log(`Contacts -> ${ctt.email} has been added`);
+            this.log(`${ctt.email} has been added`);
             return res;
         });
     }
     get domains() {
         const domains = [];
-        const domainNames = (0, utils_1.mergeValues)(this.contacts.map(ctt => ctt.email.split('@')[1]));
+        const domainNames = (0, utils_1.mergeDuplicate)(this.contacts.map(ctt => ctt.email.split('@')[1]));
         domainNames.forEach(domain => {
             const quantity = (0, utils_1.count)(this.contacts, (contact) => {
                 return contact.email.includes(domain);
@@ -37,7 +40,11 @@ class Contacts {
         return this.contacts.length;
     }
 }
+exports.Contacts = Contacts;
 class ContactsFactory {
+    static log(msg) {
+        console.log(`ContactsFactory -> ${msg}`);
+    }
     static async load(listId) {
         const contacts = [];
         let vidOffset = 0;
@@ -65,12 +72,12 @@ class ContactsFactory {
     }
     static async create(configs) {
         const { listId } = await hubspot_1.default.lists.create(configs);
-        console.log(`ContactsFactory -> list (id: ${listId}, name: ${configs.name}) was created`);
+        this.log(`list (id: ${listId}, name: ${configs.name}) was created`);
         return new Contacts(listId);
     }
     static async destroyAll() {
         const { lists } = await hubspot_1.default.lists.get();
-        console.log(`ContactsFactory -> ${lists.length} will be destroyed`);
+        this.log(`${lists.length} will be destroyed`);
         for (let i = 0; i < lists.length; i++) {
             let listId = lists[i].listId;
             await hubspot_1.default.lists.delete(listId);

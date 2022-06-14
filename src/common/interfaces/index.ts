@@ -13,3 +13,8 @@ export interface ContactProps {
 	email:string;
 	gender:string;
 }
+
+export interface Domain {
+	domain:string;
+	quantity:number;
+}

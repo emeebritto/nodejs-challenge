@@ -6,10 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.App = void 0;
 const express_1 = __importDefault(require("express"));
 const router_1 = require("./router");
+const config_1 = __importDefault(require("config"));
 class App {
     constructor() {
         this.server = (0, express_1.default)();
-        this.port = process.env.port || 3000;
+        this.port = process.env.port || config_1.default.get('api.port');
         this.middleware();
         this.router();
     }

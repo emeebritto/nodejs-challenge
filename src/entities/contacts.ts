@@ -1,29 +1,33 @@
 import hubspot from "../services/hubspot";
-import { ContactFromDB, ContactProps } from "../common/interfaces";
-import { mergeValues, count } from "../utils";
+import { ContactFromDB, ContactProps, Domain } from "../common/interfaces";
+import { mergeDuplicate, count } from "../utils";
 
 class Contacts {
-	private contacts:any[];
+	private contacts:ContactProps[];
 	private listID:number;
-	constructor(listID:number, contacts?:any) {
+	constructor(listID:number, contacts?:ContactProps[]) {
 		this.listID = listID;
 		this.contacts = contacts || []; 
+	}
+
+	private log(msg:string): void {
+		console.log(`Contacts -> ${msg}`);
 	}
 
 	async add(ctt:ContactProps): Promise<ContactFromDB> {
 		return hubspot.lists.addContacts(this.listID, { vids: [ ctt.vid ] })
 			.then((res:ContactFromDB) => {
 				this.contacts.push(ctt)
-				console.log(`Contacts -> ${ctt.email} has been added`);
+				this.log(`${ctt.email} has been added`);
 				return res
 			})
 	}
 
-	get domains() {
-		const domains:any[] = [];
-		const domainNames:string[] = mergeValues(this.contacts.map(ctt => ctt.email.split('@')[1]));
+	get domains(): Domain[] {
+		const domains:Domain[] = [];
+		const domainNames:string[] = mergeDuplicate(this.contacts.map(ctt => ctt.email.split('@')[1]));
 		domainNames.forEach(domain => {
-			const quantity = count(this.contacts, (contact:any) => {
+			const quantity = count(this.contacts, (contact:ContactProps) => {
 				return contact.email.includes(domain)
 			});
 			domains.push({ domain, quantity });
@@ -31,17 +35,21 @@ class Contacts {
 		return domains;
 	}
 
-	get show() {
+	get show(): ContactProps[] {
 		return this.contacts;
 	}
 
-	get length() {
+	get length(): number {
 		return this.contacts.length;
 	}
 }
 
 class ContactsFactory {
-	static async load(listId:number) {
+	private static log(msg:string): void {
+		console.log(`ContactsFactory -> ${msg}`);
+	}
+
+	static async load(listId:number): Promise<Contacts> {
     const contacts:any[] = [];
     let vidOffset = 0;
     let hasMore = false;
@@ -71,15 +79,15 @@ class ContactsFactory {
 		return new Contacts(listId, contacts);
 	}
 
-	static async create(configs:{ name:string }) {
+	static async create(configs:{ name:string }): Promise<Contacts> {
 		const { listId } = await hubspot.lists.create(configs);
-		console.log(`ContactsFactory -> list (id: ${listId}, name: ${configs.name}) was created`);
+		this.log(`list (id: ${listId}, name: ${configs.name}) was created`);
 		return new Contacts(listId);
 	}
 
 	static async destroyAll() {
 		const { lists } = await hubspot.lists.get();
-		console.log(`ContactsFactory -> ${lists.length} will be destroyed`);
+		this.log(`${lists.length} will be destroyed`);
 		for (let i=0; i < lists.length; i++) {
 			let listId = lists[i].listId;
 			await hubspot.lists.delete(listId);
@@ -87,5 +95,4 @@ class ContactsFactory {
 	}
 }
 
-//export default Contacts;
-export { ContactsFactory };
+export { ContactsFactory, Contacts };

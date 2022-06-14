@@ -1,26 +1,34 @@
 import { Request, Response } from "express";
 import hubspot from "../services/hubspot";
-import { ContactsFactory } from "../entities/contacts";
+import { listName } from "../consts";
+import { ContactsFactory, Contacts } from "../entities/contacts";
 
-class ContactsController{
-  public async contacts(req:Request, res:Response) {
+class ContactsController {
+  private async getContacts(): Promise<Contacts> {
     const { lists } = await hubspot.lists.get();
-    const { listId } = lists.find((list:any) => list.name.includes("emerson.britto"));
+    const { listId } = lists.find((list:{name:string}) => list.name.includes(listName));
     const contacts = await ContactsFactory.load(listId);
+    return contacts;
+  }
 
-    return res.json({
-      response: contacts
-    });
+  public async contacts(req:Request, res:Response) {
+    try {
+      const contacts:Contacts = await this.getContacts();
+      return res.json({ response: contacts });
+    } catch(err) {
+      console.error(err);
+      res.status(500).json({ status: 500, msg: "Internal Service Error" });
+    }      
   }
 
   public async domains(req:Request, res:Response) {
-    const { lists } = await hubspot.lists.get();
-    const { listId } = lists.find((list:any) => list.name.includes("emerson.britto"));
-    const contacts = await ContactsFactory.load(listId);
-
-    return res.json({
-      response: contacts.domains
-    });
+    try {
+      const contacts:Contacts = await this.getContacts();
+      return res.json({ response: contacts.domains });
+    } catch(err) {
+      console.error(err);
+      res.status(500).json({ status: 500, msg: "Internal Service Error" });
+    }
   }
 }
 

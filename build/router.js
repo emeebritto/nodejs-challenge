@@ -18,5 +18,9 @@ router.get("/", (req, res) => {
     });
 });
 //Routes
-router.get("/contacts", ContactController_1.default.contacts);
-router.get("/contacts/domains", ContactController_1.default.domains);
+router
+    .route("/contacts")
+    .get(ContactController_1.default.contacts.bind(ContactController_1.default));
+router
+    .route("/contacts/domains")
+    .get(ContactController_1.default.domains.bind(ContactController_1.default));

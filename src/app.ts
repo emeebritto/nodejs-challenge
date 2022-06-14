@@ -1,5 +1,6 @@
 import express from "express";
 import { router } from "./router";
+import config from "config";
 
 export class App {
   private server: express.Application;
@@ -7,7 +8,7 @@ export class App {
 
   constructor() {
     this.server = express();
-    this.port = process.env.port || 3000;
+    this.port = process.env.port || config.get('api.port');
     this.middleware();
     this.router();
   }

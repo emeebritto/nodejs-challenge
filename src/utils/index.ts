@@ -1,4 +1,4 @@
-export const mergeValues = (list:any[]) => [...new Set(list)];
+export const mergeDuplicate = (list:any[]) => [...new Set(list)];
 
 export const count = (list:any[], fn: ((s:any) => any)) => {
 	let counter = 0;
@@ -6,4 +6,8 @@ export const count = (list:any[], fn: ((s:any) => any)) => {
 		if(fn(list[i])) counter++;
 	}
 	return counter;
+}
+
+export const formatListName = (listName:string): string => {
+	return listName.trim().replaceAll(/\s/g, ".").toLowerCase();
 }
