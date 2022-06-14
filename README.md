@@ -30,15 +30,17 @@ $ npm start
 
 ```
 ├── build             - Build do projeto (Execute com `npm start`);
+├── config            - variaveis de configuração;
 ├── src               - Fonte do projeto (Execute con `npm run dev`);
 │  ├── common         - Types, interfaces and others global sources;
-│  ├── config         - variaveis de configuração;
+│  ├── consts         - Constantes;
 │  ├── controllers    - Controladores/Gerente dos dados;
 │  ├── data           - Arquivos de importação CSV;
 │  ├── entities       - entities;
 │  ├── services       - Serviços externos (API);
 │  ├── utils          - Functions and Tools;
 │  ├── app.ts         - Express Class;
+│  ├── env.config.ts  - inicializa dotenv;
 │  ├── index.ts       - Processo principal;
 │  ├── router.ts      - Api Router;
 │  └── startup.ts     - Executable on api Startup;
