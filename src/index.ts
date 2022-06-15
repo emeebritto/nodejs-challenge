@@ -2,6 +2,6 @@ import "./env.config";
 import { App } from "./app";
 import "./startup";
 
-new App().startup(() => {
-	console.log('Server is running on port 3000')
+new App().startup((port) => {
+	console.log(`Server is running on port ${port}`);
 });

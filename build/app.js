@@ -23,7 +23,7 @@ class App {
     startup(callback) {
         this.server.listen(this.port, () => {
             if (callback)
-                callback();
+                callback(this.port);
         });
     }
 }

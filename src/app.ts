@@ -21,9 +21,9 @@ export class App {
     this.server.use(router);
   }
 
-  startup(callback?: (() => void)) {
+  public startup(callback?: ((s:number | string) => void)) {
     this.server.listen(this.port, () => {
-      if (callback) callback()
+      if (callback) callback(this.port);
     });
   }
 }

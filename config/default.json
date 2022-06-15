@@ -1,6 +1,6 @@
 {
   "api": {
-    "port": 3000
+    "port": 2222
   },
   "onStartup": {
     "destroyAllList" : false // destrói as listas já existentes.
